@@ -1,0 +1,27 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Statistique pour l'expérimentation animale"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Introduction
+      - href: Dispo_expe.qmd
+        text: Dispositif expérimental
+      - href: lme.qmd
+        text: Modèle linéaire Mixte
+        
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+editor: visual
+
+execute: 
+  warning: false
+

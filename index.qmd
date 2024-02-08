@@ -1,0 +1,22 @@
+---
+title: "EC Expérimentation expérimentale"
+---
+
+![](oniris.png)
+
+Ce cours s'adresse aux étudiants de VET5 et VET6.
+
+Il concerne les modèles à effets mixtes qui sont des modèles usuels en expérimentation animale.
+
+Toutes les manipulations seront faites sur le logiciel R-studio disponible à l'adresse [Posit](https://posit.co/download/rstudio-desktop/).
+
+# Bibliographie :
+
+- [Linear Mixed-Effects Models Using R](https://link.springer.com/book/10.1007/978-1-4614-3900-4)
+
+- [Site analyse-R](https://larmarange.github.io/analyse-R/)
+
+- [Design and Analysis of Experiments](https://www.wiley.com/en-us/Design+and+Analysis+of+Experiments%2C+10th+Edition-p-9781119492443)
+
+- [Generalized linear mixed models. Modern concepts methods and applications](https://www.routledge.com/Generalized-Linear-Mixed-Models-Modern-Concepts-Methods-and-Applicati/Garai-Ptukhina-Stroup/p/book/9781498755566?_gl=1*1y0tyou*_ga*MTE2NjUxNjUyOS4xNzA3Mzk3NjUx*_ga_0HYE8YG0M6*MTcwNzM5NzY1MS4xLjAuMTcwNzM5NzY1MS4wLjAuMA..)
+

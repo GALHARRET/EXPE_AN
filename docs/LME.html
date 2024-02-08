@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Statistique pour l'expérimentation animale – lme</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Statistique pour l’expérimentation animale</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html" rel="" target="">
+ <span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./Dispo_expe.html" rel="" target="">
+ <span class="menu-text">Dispositif expérimental</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./LME.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Modèle linéaire Mixte</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#notations" id="toc-notations" class="nav-link" data-scroll-target="#notations">Notations</a></li>
+  </ul></li>
+  <li><a href="#modélisation-statistique-de-données-indépendantes" id="toc-modélisation-statistique-de-données-indépendantes" class="nav-link" data-scroll-target="#modélisation-statistique-de-données-indépendantes">Modélisation statistique de données indépendantes</a></li>
+  <li><a href="#modélisation-1-on-aggrège-les-données-sur-time" id="toc-modélisation-1-on-aggrège-les-données-sur-time" class="nav-link" data-scroll-target="#modélisation-1-on-aggrège-les-données-sur-time">Modélisation 1 on aggrège les données sur Time</a>
+  <ul class="collapse">
+  <li><a href="#etude-de-leffet-régime" id="toc-etude-de-leffet-régime" class="nav-link" data-scroll-target="#etude-de-leffet-régime">Etude de l’effet régime</a></li>
+  </ul></li>
+  <li><a href="#modélisation-à-effets-mixtes" id="toc-modélisation-à-effets-mixtes" class="nav-link" data-scroll-target="#modélisation-à-effets-mixtes">Modélisation à effets mixtes</a>
+  <ul class="collapse">
+  <li><a href="#modèle-à-intercept-aléatoire" id="toc-modèle-à-intercept-aléatoire" class="nav-link" data-scroll-target="#modèle-à-intercept-aléatoire">Modèle à intercept aléatoire</a></li>
+  <li><a href="#retour-au-modèle-global" id="toc-retour-au-modèle-global" class="nav-link" data-scroll-target="#retour-au-modèle-global">Retour au modèle global</a></li>
+  <li><a href="#vérification-de-la-qualité-mathématique-du-modèle." id="toc-vérification-de-la-qualité-mathématique-du-modèle." class="nav-link" data-scroll-target="#vérification-de-la-qualité-mathématique-du-modèle.">Vérification de la qualité (mathématique) du modèle.</a>
+  <ul class="collapse">
+  <li><a href="#normalité-et-indépendance-des-résidus-du-modèle" id="toc-normalité-et-indépendance-des-résidus-du-modèle" class="nav-link" data-scroll-target="#normalité-et-indépendance-des-résidus-du-modèle">Normalité et indépendance des résidus du modèle</a></li>
+  <li><a href="#normalité-des-effets-aléatoires" id="toc-normalité-des-effets-aléatoires" class="nav-link" data-scroll-target="#normalité-des-effets-aléatoires">Normalité des effets aléatoires</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#modèle-à-pentes-aléatoires" id="toc-modèle-à-pentes-aléatoires" class="nav-link" data-scroll-target="#modèle-à-pentes-aléatoires">Modèle à pentes aléatoires</a></li>
+  <li><a href="#autres-modélisations" id="toc-autres-modélisations" class="nav-link" data-scroll-target="#autres-modélisations">Autres modélisations</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">knitr.kable.NA =</span> <span class="st">''</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">contrasts=</span><span class="fu">c</span>(<span class="st">"contr.sum"</span>,<span class="st">"contr.sum"</span>))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data1.xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Dans un modèle linéaire classique (noté LM), on suppose que les données (observations) sont indépendantes.</p>
+<p>Dans le modèle à effets aléatoires (noté LMER), les données considérées seront dépendantes :</p>
+<ol type="1">
+<li><p>Mesures répétées sur les mêmes individus (e.g., taux de cholesterol mesuré sur des rats suivant successivement plusieurs régimes <span class="math inline">\(\leadsto\)</span> données expérimentales).</p></li>
+<li><p>Mesures longitudinales (e.g.&nbsp;suivi journalier de la tension artérielle chez une groupe d’individus <span class="math inline">\(\leadsto\)</span> données observationnelles).</p></li>
+<li><p>Mesures hiérarchiques (e.g., glycémie mesurée sur des vaches de la même espèce, plusieurs espèces étant comparées). (Schabenberger and Pierce 2001) On parle aussi de données multiniveaux.</p></li>
+<li><p>Données spatiales (e.g., données sur des vaches de même champs, plusieurs champs étant considérées).</p></li>
+</ol>
+<section id="notations" class="level2">
+<h2 class="anchored" data-anchor-id="notations">Notations</h2>
+<ul>
+<li><p>Dans toute la suite la variable que l’on souhaite expliquer est notée <span class="math inline">\(Y\)</span>, le traitement sera noté <span class="math inline">\(A\)</span> et les covariables au traitement seront notées <span class="math inline">\(X\)</span> (dans l’écriture on se limitera à une seule covariable mais plusieurs peuvent être considérées).</p></li>
+<li><p>Dans ce cours : <span class="math inline">\(Y\)</span> est une variable <strong><em>continue</em></strong>, nous verrons dans un autre cours le cas où la variable est qualitative.</p></li>
+</ul>
+</section>
+</section>
+<section id="modélisation-statistique-de-données-indépendantes" class="level1">
+<h1>Modélisation statistique de données indépendantes</h1>
+<p>On veut étudier l’effet du traitement <span class="math inline">\(A\)</span> sur <span class="math inline">\(Y\)</span> en contrôlant la covariable <span class="math inline">\(X\)</span>. On a deux situations possibles :</p>
+<ol type="1">
+<li><span class="math inline">\(A\)</span> est une variable continue (e.g.&nbsp;dose de médicament) et dans ce cas on écrit :</li>
+</ol>
+<p><span class="math display">\[
+Y_{i}=\mu+\alpha A_i+\beta X_{i}+\varepsilon_{i}
+\]</span> Pour l’animal <span class="math inline">\(i\)</span>, <span class="math inline">\(Y_{i}\)</span> est la valeur observée de la variable d’intérêt <span class="math inline">\(Y\)</span> , <span class="math inline">\(A_i\)</span> la dose de médicament administrée, <span class="math inline">\(X_{i}\)</span> la valeur de la covariable <span class="math inline">\(X\)</span> .</p>
+<p>Et alors on teste l’effet de <span class="math inline">\(A\)</span> en testant <span class="math inline">\(H_0:\alpha=0.\)</span></p>
+<ol start="2" type="1">
+<li><span class="math inline">\(A\)</span> est une variable qualitative (e.g.&nbsp;un régime) qui possède différents niveaux (on note <span class="math inline">\(J\)</span> le nombre de niveaux de <span class="math inline">\(A\)</span>). Dans ce cas on écrit :</li>
+</ol>
+<p><span class="math display">\[
+Y_{ij}=\mu+\alpha_j +\beta X_{ij}+\varepsilon_{ij}
+\]</span></p>
+<p>Pour l’animal <span class="math inline">\(i\)</span> et le niveau de traitement <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{ij}\)</span> désigne la valeur de la variable d’intérêt, <span class="math inline">\(X_{ij}\)</span> étant la valeur de la covariable <span class="math inline">\(X\)</span>.</p>
+<p>Pour tester l’effet du traitement <span class="math inline">\(A\)</span> on va tester <span class="math inline">\(H_0:\alpha_1=...=\alpha_J=0.\)</span></p>
+<p><strong><em>Remarque :</em></strong> Dans les deux cas <span class="math inline">\(\mu\)</span> représente l’intercept du modèle.</p>
+<p>Dans cette modélisation les résidus sont supposés <strong><em>indépendants</em></strong> (c’est à dire au moins non corrélés). Ceci est plausible car il n’y a, a priori, aucun rapport entre les différents individus.</p>
+</section>
+<section id="modélisation-1-on-aggrège-les-données-sur-time" class="level1">
+<h1>Modélisation 1 on aggrège les données sur Time</h1>
+<p>On calcule les moyennes de toutes les variables considérées sur les rats (c’est à dire pour chaque rat on calcule la moyenne entre la semaine 1 et la semaine 11).</p>
+<p><strong><em>Question</em></strong> : Les données sont elles dépendantes ou indépendantes ? Pourquoi ?</p>
+<p>Du côté de R : on utilise la librarie dplyr très pratique pour manipuler les données. Le site <a href="https://juba.github.io/tidyverse/10-dplyr.html" class="uri">https://juba.github.io/tidyverse/10-dplyr.html</a> constitue une très bonne introduction à ce package.</p>
+<p>On va étudier par exemple les variables NEFA et TG</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">=</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Rats,Groups) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">NEFA=</span><span class="fu">mean</span>(NEFA),<span class="at">TG=</span><span class="fu">mean</span>(TG))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="etude-de-leffet-régime" class="level2">
+<h2 class="anchored" data-anchor-id="etude-de-leffet-régime">Etude de l’effet régime</h2>
+<p>On commence par faire une représentation graphique de NEFA en fonction du groupe</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df1,<span class="fu">aes</span>(<span class="at">x=</span>Groups,<span class="at">y=</span>NEFA))<span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"NEFA en fonction du régime"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong><em>Question</em></strong> Le regime semble t’il avoir un effet sur NEFA ? Quel groupe a la plus grande dispersion ? A combien d’observations correspondent les boxplots</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>Groups<span class="ot">&lt;-</span><span class="fu">as.factor</span>(df1<span class="sc">$</span>Groups)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">relevel</span>(df1<span class="sc">$</span>Groups,<span class="at">ref=</span><span class="st">"CC"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] CC CC CC CC CC CC LL LL LL LL LL LL FF FF FF FF FF FF LF LF LF LF LF LF
+Levels: CC FF LF LL</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>modLin<span class="ot">&lt;-</span><span class="fu">lm</span>(NEFA<span class="sc">~</span>Groups,<span class="at">data=</span>df1)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(modLin) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Df</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Sum Sq</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean Sq</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">F value</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Groups</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.018</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">0.898</td>
+<td style="text-align: right;">0.459</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Residuals</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.134</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modLin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = NEFA ~ Groups, data = df1)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.12514 -0.04834 -0.00613  0.05089  0.16461 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  0.405113   0.016709  24.245 2.66e-16 ***
+Groups1     -0.025634   0.028941  -0.886    0.386    
+Groups2      0.007566   0.028941   0.261    0.796    
+Groups3      0.041680   0.028941   1.440    0.165    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.08186 on 20 degrees of freedom
+Multiple R-squared:  0.1187,    Adjusted R-squared:  -0.01346 
+F-statistic: 0.8981 on 3 and 20 DF,  p-value: 0.4594</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="modélisation-à-effets-mixtes" class="level1">
+<h1>Modélisation à effets mixtes</h1>
+<p>Ici on va prendre la dimension temporelle des données. C’est à dire l’on modélise le fait que pour chaque rat il y a eu deux mesures de chaque propriété biochimique.</p>
+<p><strong><em>Remarque</em></strong></p>
+<ol type="1">
+<li><p>Avec deux mesures par individu, la modélisation tenant compte de la mesure répétée est limitée à un effet aléatoire sur l’intercept du modèle.</p></li>
+<li><p>Un modèle dans lequel on considère des effets fixes et des effets aléatoires s’appelle un modèle à effet mixte.</p></li>
+<li><p>Lorsqu’il y a plus de 2 répétitions on peut envisager des modèles à pentes aléatoires, on le verra dans un deuxième exemple.</p></li>
+</ol>
+<section id="modèle-à-intercept-aléatoire" class="level2">
+<h2 class="anchored" data-anchor-id="modèle-à-intercept-aléatoire">Modèle à intercept aléatoire</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span>Groups,<span class="at">y=</span>NEFA,<span class="at">color=</span>Time))<span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"NEFA en fonction du régime"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Dans R pour définir un modèle à effets mixtes on va utiliser le package <strong><em>lmerTest</em></strong>.</p>
+<p>La figure ci-dessus nous donne la différence de NEFA pour chaque rat du groupe CC (contrôle) en fonction de la semaine considérée.</p>
+<p>D’un point de vue modélisation on va écrire :</p>
+<p><span class="math display">\[
+NEFA_{ij}=\mu+\alpha_i+\beta_{j}+\varepsilon_{ij},
+\]</span> où <span class="math inline">\(i\)</span> est le numéro du rat (de 1 à 6) et <span class="math inline">\(j\)</span> la semaine considérée (1 ou 11).</p>
+<p>On obtient les résultats suivants (estimations avec la fonction lm de R).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dfCC<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(df<span class="sc">%&gt;%</span> <span class="fu">filter</span>(Groups<span class="sc">==</span><span class="st">"CC"</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>dfCC<span class="sc">$</span>Rats<span class="ot">&lt;-</span><span class="fu">factor</span>(dfCC<span class="sc">$</span>Rats)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>dfCC<span class="sc">$</span>Time<span class="ot">&lt;-</span><span class="fu">factor</span>(dfCC<span class="sc">$</span>Time,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"Week 11"</span>,<span class="st">"Week 1"</span>))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">relevel</span>(dfCC<span class="sc">$</span>Time,<span class="at">ref=</span><span class="st">"Week 1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] Week 1  Week 1  Week 1  Week 1  Week 1  Week 1  Week 11 Week 11 Week 11
+[10] Week 11 Week 11 Week 11
+Levels: Week 1 Week 11</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(NEFA<span class="sc">~</span>Time<span class="sc">+</span>Rats,<span class="at">data=</span>dfCC)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = NEFA ~ Time + Rats, data = dfCC)
+
+Residuals:
+       1        2        3        4        5        6        7        8 
+ 0.11125  0.01505 -0.10442  0.12214 -0.09833 -0.04568 -0.11125 -0.01505 
+       9       10       11       12 
+ 0.10442 -0.12214  0.09833  0.04568 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  0.37948    0.04090   9.279 0.000245 ***
+Time1       -0.07570    0.04090  -1.851 0.123413    
+Rats1       -0.02154    0.09145  -0.235 0.823165    
+Rats2        0.03709    0.09145   0.406 0.701859    
+Rats3       -0.06620    0.09145  -0.724 0.501559    
+Rats4        0.07309    0.09145   0.799 0.460437    
+Rats5       -0.12514    0.09145  -1.368 0.229483    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.1417 on 5 degrees of freedom
+Multiple R-squared:  0.5898,    Adjusted R-squared:  0.09756 
+F-statistic: 1.198 on 6 and 5 DF,  p-value: 0.4307</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">as.numeric</span>(dfCC<span class="sc">$</span>Time),dfCC<span class="sc">$</span>NEFA,<span class="at">pch=</span><span class="dv">20</span>,<span class="at">col=</span>dfCC<span class="sc">$</span>Rats,<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">6</span>),</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Groupe CC"</span>,<span class="at">ylab=</span><span class="st">"NEFA"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a=</span><span class="fu">coef</span>(mod)[<span class="dv">1</span>],<span class="at">b=</span><span class="fu">coef</span>(mod)[<span class="dv">2</span>])</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>){</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">abline</span>(<span class="at">a=</span><span class="fu">coef</span>(mod)[<span class="dv">1</span>]<span class="sc">+</span><span class="fu">coef</span>(mod)[<span class="dv">2</span><span class="sc">+</span>i],<span class="at">b=</span><span class="fu">coef</span>(mod)[<span class="dv">2</span>],<span class="at">col=</span>(<span class="dv">1</span><span class="sc">+</span>i))</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En soi, les résultats individuels des rats n’ont aucun intérêt, on veut seulement “neutraliser” les différences de NEFA qui sont associées à ces rats. Pour ce faire plutôt que de considérer un effet fixe par rat on va utiliser un effet aléatoire qui résumera l’effet “rat”.</p>
+<p>Le modèle précédent est toujours le même sauf que</p>
+<p><span class="math display">\[
+\alpha_i \sim \mathcal N(0,\sigma^2_\alpha)
+\]</span> avec <span class="math inline">\(\alpha_i,\varepsilon_{ij}\)</span> indépendantes. On résume ainsi les différents coefficients <span class="math inline">\(\alpha_i\)</span> à une seule variance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>modE<span class="ot">&lt;-</span><span class="fu">lmer</span>(NEFA<span class="sc">~</span>Time<span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>Rats),<span class="at">data=</span>dfCC)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: NEFA ~ Time + (1 | Rats)
+   Data: dfCC
+
+REML criterion at convergence: -7.1
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.6849 -0.5277  0.2272  0.4915  1.4720 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Rats     (Intercept) 0.00000  0.0000  
+ Residual             0.01759  0.1326  
+Number of obs: 12, groups:  Rats, 6
+
+Fixed effects:
+            Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)  0.37948    0.03829 10.00000   9.912 1.72e-06 ***
+Time1       -0.07570    0.03829 10.00000  -1.977   0.0762 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+      (Intr)
+Time1 0.000 
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see help('isSingular')</code></pre>
+</div>
+</div>
+<p>On constate que cela ne change pas l’estimation de l’effet semaine (appelé effet fixe).</p>
+</section>
+<section id="retour-au-modèle-global" class="level2">
+<h2 class="anchored" data-anchor-id="retour-au-modèle-global">Retour au modèle global</h2>
+<p><span class="math display">\[
+NEFA_{ijk}=\mu+\alpha_i+\beta_{j}+\gamma_{k}+(\beta\gamma)_{jk}+\varepsilon_{ijk},
+\]</span> où <span class="math inline">\(i\)</span> est le numéro du rat, <span class="math inline">\(j\)</span> le numéro de la semaine et <span class="math inline">\(k\)</span> le numéro du groupe. On a donc trois effets fixes : semaine, groupe et leur interaction. Un effet aléatoire sur l’effet individuel rat.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>RegLin<span class="ot">&lt;-</span><span class="fu">lm</span>(NEFA<span class="sc">~</span>Groups<span class="sc">*</span>Time,<span class="at">data=</span>df)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(RegLin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = NEFA ~ Groups * Time, data = df)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.223468 -0.052560 -0.003011  0.056438  0.217414 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    0.405113   0.016595  24.411  &lt; 2e-16 ***
+Groups1       -0.025634   0.028744  -0.892  0.37783    
+Groups2        0.007566   0.028744   0.263  0.79373    
+Groups3        0.041680   0.028744   1.450  0.15484    
+Time1          0.054609   0.016595   3.291  0.00209 ** 
+Groups1:Time1  0.021088   0.028744   0.734  0.46744    
+Groups2:Time1 -0.047540   0.028744  -1.654  0.10598    
+Groups3:Time1  0.008394   0.028744   0.292  0.77179    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.115 on 40 degrees of freedom
+Multiple R-squared:  0.2905,    Adjusted R-squared:  0.1663 
+F-statistic: 2.339 on 7 and 40 DF,  p-value: 0.04231</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(RegLin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: NEFA
+            Df  Sum Sq  Mean Sq F value   Pr(&gt;F)   
+Groups       3 0.03611 0.012037  0.9105 0.444523   
+Time         1 0.14314 0.143141 10.8280 0.002093 **
+Groups:Time  3 0.03722 0.012405  0.9384 0.431127   
+Residuals   40 0.52878 0.013220                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>RegLinME<span class="ot">&lt;-</span><span class="fu">lmer</span>(NEFA<span class="sc">~</span>Groups<span class="sc">*</span>Time<span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>Rats),<span class="at">data=</span>df)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(RegLinME)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: NEFA ~ Groups * Time + (1 | Rats)
+   Data: df
+
+REML criterion at convergence: -34.1
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-1.92736 -0.46372 -0.03845  0.47918  1.87916 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Rats     (Intercept) 0.000182 0.01349 
+ Residual             0.013038 0.11418 
+Number of obs: 48, groups:  Rats, 24
+
+Fixed effects:
+               Estimate Std. Error        df t value Pr(&gt;|t|)    
+(Intercept)    0.405113   0.016709 19.999949  24.245 2.66e-16 ***
+Groups1       -0.025634   0.028941 19.999949  -0.886  0.38629    
+Groups2        0.007566   0.028941 19.999949   0.261  0.79644    
+Groups3        0.041680   0.028941 19.999949   1.440  0.16529    
+Time1          0.054609   0.016481 19.999942   3.313  0.00347 ** 
+Groups1:Time1  0.021088   0.028545 19.999942   0.739  0.46864    
+Groups2:Time1 -0.047540   0.028545 19.999942  -1.665  0.11142    
+Groups3:Time1  0.008394   0.028545 19.999942   0.294  0.77175    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) Grops1 Grops2 Grops3 Time1  Gr1:T1 Gr2:T1
+Groups1      0.000                                          
+Groups2      0.000 -0.333                                   
+Groups3      0.000 -0.333 -0.333                            
+Time1        0.000  0.000  0.000  0.000                     
+Groups1:Tm1  0.000  0.000  0.000  0.000  0.000              
+Groups2:Tm1  0.000  0.000  0.000  0.000  0.000 -0.333       
+Groups3:Tm1  0.000  0.000  0.000  0.000  0.000 -0.333 -0.333</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(RegLinME)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
+              Sum Sq  Mean Sq NumDF DenDF F value   Pr(&gt;F)   
+Groups      0.035129 0.011710     3    20  0.8981 0.459421   
+Time        0.143141 0.143141     1    20 10.9792 0.003467 **
+Groups:Time 0.037216 0.012405     3    20  0.9515 0.434661   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>La différence entre les deux modèles est très faible ce qui s’explique par le fait qu’il n’y a que deux mesures différentes par rat.</p>
+<p>On peut ajouter des covariables dans le modèle (les autres paramètres biochimiques)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>LinModE<span class="ot">&lt;-</span><span class="fu">lmer</span>(NEFA<span class="sc">~</span>Time<span class="sc">*</span>Groups<span class="sc">+</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                BW<span class="sc">+</span>Cholesterol<span class="sc">+</span>Insulinemia<span class="sc">+</span>TG<span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>Rats),<span class="at">data=</span>df)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(LinModE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
+              Sum Sq  Mean Sq NumDF  DenDF F value  Pr(&gt;F)  
+Time        0.003758 0.003758     1 30.909  0.3027 0.58616  
+Groups      0.012932 0.004311     3 21.948  0.3472 0.79152  
+BW          0.002444 0.002444     1 21.046  0.1968 0.66184  
+Cholesterol 0.063661 0.063661     1 30.773  5.1269 0.03075 *
+Insulinemia 0.000024 0.000024     1 34.629  0.0019 0.96530  
+TG          0.002964 0.002964     1 34.009  0.2387 0.62826  
+Time:Groups 0.030426 0.010142     3 20.713  0.8168 0.49920  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Si on veut un modèle plus parcimonieux (on ne garde que les variables significatives), alors on utilise la fonction step :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step</span>(LinModE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Backward reduced random-effect table:
+
+           Eliminated npar logLik    AIC       LRT Df Pr(&gt;Chisq)
+&lt;none&gt;                  14 6.8252 14.350                        
+(1 | Rats)          1   13 6.8219 12.356 0.0065287  1     0.9356
+
+Backward reduced fixed-effect table:
+            Eliminated Df Sum of Sq     RSS     AIC F value  Pr(&gt;F)  
+Insulinemia          1  1  0.000017 0.45533 -201.58  0.0013 0.97110  
+BW                   2  1  0.002678 0.45801 -203.30  0.2176 0.64361  
+TG                   3  1  0.002849 0.46086 -205.00  0.2364 0.62963  
+Time:Groups          4  3  0.039239 0.50010 -207.08  1.1069 0.35795  
+Groups               5  3  0.023605 0.52370 -210.87  0.6608 0.58079  
+Time                 0  1  0.048804 0.57251 -208.59  4.1935 0.04644 *
+Cholesterol          0  1  0.078402 0.60211 -206.17  6.7368 0.01271 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Model found:
+NEFA ~ Time + Cholesterol</code></pre>
+</div>
+</div>
+</section>
+<section id="vérification-de-la-qualité-mathématique-du-modèle." class="level2">
+<h2 class="anchored" data-anchor-id="vérification-de-la-qualité-mathématique-du-modèle.">Vérification de la qualité (mathématique) du modèle.</h2>
+<section id="normalité-et-indépendance-des-résidus-du-modèle" class="level3">
+<h3 class="anchored" data-anchor-id="normalité-et-indépendance-des-résidus-du-modèle">Normalité et indépendance des résidus du modèle</h3>
+<p>On a supposé que les résidus <span class="math inline">\(\varepsilon_{ijk}\)</span> sont distribués normalement on peut le vérifier graphiquement</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(LinModE),<span class="at">pch=</span><span class="dv">20</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">residuals</span>(LinModE),<span class="at">pch=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>ou bien grâce au test de Shapiro-Wilk</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">residuals</span>(modLin))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  residuals(modLin)
+W = 0.97806, p-value = 0.8576</code></pre>
+</div>
+</div>
+<p>On peut donc considérer que les résidus sont normaux.</p>
+<p>Pour vérifier l’indépendance on regarde si il existe un lien entre les valeurs prédites et les résidus :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">residuals</span>(LinModE),<span class="fu">fitted</span>(LinModE),<span class="at">pch=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Clairement il n’y pas de lien !</p>
+</section>
+<section id="normalité-des-effets-aléatoires" class="level3">
+<h3 class="anchored" data-anchor-id="normalité-des-effets-aléatoires">Normalité des effets aléatoires</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Rats<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Rats<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Rats<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  ranef(LinModE)$Rats$`(Intercept)`
+W = 0.98058, p-value = 0.9064</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="modèle-à-pentes-aléatoires" class="level1">
+<h1>Modèle à pentes aléatoires</h1>
+<p>Les données sont issues d’une thèse vétérinaire soutenue en Juillet 2021. Le titre :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"ProAKAP4_BOUC.xlsx"</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Milieu<span class="ot">&lt;-</span><span class="fu">factor</span>(df<span class="sc">$</span>Milieu,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"L"</span>,<span class="st">"B"</span>,<span class="st">"O"</span>)) <span class="co"># Milieu est une variable qualitative</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Race<span class="ot">&lt;-</span><span class="fu">as.factor</span>(df<span class="sc">$</span>Race)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>L’une des problématiques est de tester l’effet d’un dilueur (3 milieux considérés) et de la race (deux races) sur la variable ALH (Amplitude de déplacement latéral de la tête du spermatozoide).</p>
+<p>Pour chacune des deux races on a 3 boucs différents et chacun des échantillons obtenu est placé dans un milieu différent.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span>Milieu,<span class="at">y=</span>ALH,<span class="at">color=</span>Race))<span class="sc">+</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Le modèle mathématique qui est testé est :</p>
+<p><span class="math display">\[
+ALH_{ijk}=\alpha_i+\beta_i Dilueur_{ij}+ \gamma_i Race_{ik}+\varepsilon_{ijk}
+\]</span> où <span class="math inline">\(i\)</span> est le bouc, <span class="math inline">\(j\)</span> le dilueur et <span class="math inline">\(k\)</span> la race.</p>
+<p>avec <span class="math display">\[
+\begin{cases}
+\alpha_i=\alpha+a_i, \quad a_i\sim \mathcal N(0,\sigma^2_a) \\
+\beta_i = \beta +b_i, \quad \quad b_i\sim \mathcal N(0,\sigma^2_b) \\
+\gamma_i = \gamma +c_i, \quad \quad c_i\sim \mathcal N(0,\sigma^2_c)
+\end{cases}
+\]</span> Les termes <span class="math inline">\(\alpha,\beta,\gamma\)</span> sont les effets fixes du modèle et les termes <span class="math inline">\(a_i,b_i,c_i\)</span> sont les effets aléatoires.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>LinModE<span class="ot">&lt;-</span><span class="fu">lmer</span>(ALH<span class="sc">~</span>Milieu<span class="sc">+</span>Race<span class="sc">+</span>(Milieu<span class="sc">+</span>Race<span class="sc">|</span>Bouc),<span class="at">data=</span>df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Le modèle est singulier c’est à dire que certaines variances des effets aléatoires sont proches de 0 :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Bouc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept)      Milieu1      Milieu2        Race1
+1  0.047369003 -0.048770430  0.039158345 -0.151805379
+2 -0.216800733  0.042840555 -0.030608248 -0.054310081
+3  0.048217086  0.117909453 -0.098190480  0.541329817
+4  0.068416764 -0.073347145  0.058952324 -0.231327479
+5  0.002829674 -0.001878355  0.001486411 -0.004771554
+6 -0.028235175  0.020054706 -0.015912771  0.053040236
+7 -0.168002511  0.132860617 -0.105832737  0.371827278
+8  0.275483309 -0.213804512  0.170199303 -0.592861393
+9 -0.029277416  0.024135111 -0.019252147  0.068878555</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Bouc,<span class="dv">2</span>,var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)     Milieu1     Milieu2       Race1 
+0.020253802 0.010981106 0.007047679 0.108733160 </code></pre>
+</div>
+</div>
+<p>Il s’agit de l’effet aléatoire sur la variable Milieu qui a une variance proche de 0 donc on va retirer ce terme du modèle</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>LinModE<span class="ot">&lt;-</span><span class="fu">lmer</span>(ALH<span class="sc">~</span>Milieu<span class="sc">+</span>Race<span class="sc">+</span>(Race<span class="sc">|</span>Bouc),<span class="at">data=</span>df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>On peut alors analyser les sorties du modèle :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(LinModE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
+       Sum Sq Mean Sq NumDF  DenDF F value   Pr(&gt;F)   
+Milieu 2.9381   1.469     2 70.000  5.0027 0.009316 **
+Race   1.0860   1.086     1  6.988  3.6985 0.095955 . 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>On peut vérifier les hypothèses d’utilisation du modèle :</p>
+<p>Normalité des résidus et indépedance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(LinModE),<span class="at">pch=</span><span class="dv">20</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">residuals</span>(LinModE),<span class="at">pch=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">residuals</span>(LinModE))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  residuals(LinModE)
+W = 0.98544, p-value = 0.4918</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">residuals</span>(LinModE),<span class="fu">fitted</span>(LinModE),<span class="at">pch=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-21-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Pour les effets aléatoires :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Bouc<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>,<span class="at">pch=</span><span class="dv">20</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Bouc<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>,<span class="at">pch=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Bouc<span class="sc">$</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  ranef(LinModE)$Bouc$`(Intercept)`
+W = 0.82029, p-value = 0.03472</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Bouc<span class="sc">$</span>Race1,<span class="at">pch=</span><span class="dv">20</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Bouc<span class="sc">$</span>Race1,<span class="at">pch=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="LME_files/figure-html/unnamed-chunk-22-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">ranef</span>(LinModE)<span class="sc">$</span>Bouc<span class="sc">$</span>Race1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  ranef(LinModE)$Bouc$Race1
+W = 0.97119, p-value = 0.9047</code></pre>
+</div>
+</div>
+<p>Le modèle est donc validé de ce point de vue.</p>
+</section>
+<section id="autres-modélisations" class="level1">
+<h1>Autres modélisations</h1>
+<p>Considérons deux variables continues ProAKAP4 et PROGRESSIVE_PCT</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

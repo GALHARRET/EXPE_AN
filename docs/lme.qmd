@@ -1,0 +1,360 @@
+---
+title: "Modèles linéaires à effets mixtes"
+---
+
+```{r}
+options(knitr.kable.NA = '')
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(readxl)
+library(lmerTest)
+library(kableExtra)
+library(gtsummary)
+options(contrasts=c("contr.sum","contr.sum"))
+```
+
+# Introduction
+
+Dans un modèle linéaire classique on suppose que les données (observations) sont indépendantes. On peut rencontrer des situations dans lesquelles ce n'est pas le cas (données dépendantes) :
+
+1.  Mesures répétées sur les mêmes individus (e.g., taux de cholesterol mesuré de façon journalière sur un groupe de rats suivant un régime particulier $\leadsto$ données expérimentales).
+
+2.  Mesures longitudinales (e.g. suivi journalier de la tension artérielle chez une groupe d'individus $\leadsto$ données observationnelles).
+
+3.  Mesures hiérarchiques (e.g., glycémie mesurée sur des vaches de la même espèce, plusieurs espèces étant comparées). (Schabenberger and Pierce 2001)
+
+4.  Données spatiales (e.g., données sur des vaches de même champs, plusieurs champs étant considérées).
+
+## Données temporelles
+
+Les mesures longitudinales et répétées sont des données temporelles. Elles sont très utilisées en expérimentation animale.
+
+Un cas classique est d'étudier l'effet d'un traitement, d'un régime sur des animaux au cours du temps.
+
+## Modélisation statistique de données indépendantes
+
+Dans toute la suite la variable que l'on souhaite expliquer est notée $Y$, le traitement sera noté $A$ et les covariables au traitement seront notées $X$ (dans l'écriture on se limitera à une seule covariable mais plusieurs peuvent être considérées).
+
+Dans ce cours : $Y$ est une variable ***continue***, nous verrons dans un autre cours le cas où la variable est qualitative.
+
+Revenons aux cas d'observations indépendantes : on veut étudier l'effet du traitement $A$ sur $Y$ en contrôlant la covariable $X$. On a deux situations possibles :
+
+1.  $A$ est une variable continue (e.g. dose de médicament) et dans ce cas on écrit :
+
+$$ 
+Y_{i}=\mu+\alpha A_i+\beta X_{i}+\varepsilon_{i}
+$$
+
+$Y_{ij}$ valeur pour l'animal $i$ et le niveau de traitement $j$, $X_{ij}$ étant la valeur de la covariable $X$.
+
+Et alors on teste l'effet de $A$ en testant $H_0:\alpha=0.$
+
+2.  $A$ est une variable qualitative (e.g. un régime) qui possède différents niveaux (on note $a$ le nombre de niveaux de $A$). Dans ce cas on écrit :
+
+$$ 
+Y_{ij}=\mu+\alpha_j +\beta X_{ij}+\varepsilon_{ij}
+$$ $Y_{ij}$ valeur pour l'animal $i$ et le niveau de traitement $j$, $X_{ij}$ étant la valeur de la covariable $X$.
+
+Pour tester l'effet du traitement $A$ on va tester $H_0:\alpha_1=...=\alpha_a=0.$
+
+Dans les deux cas $\mu$ représente l'intercept du modèle.
+
+Dans cette modélisation les résidus sont supposés ***indépendants*** (c'est à dire au moins non corrélés). Ceci est plausible car il n'y a, a priori, aucun rapport entre les différents individus.
+
+## Exemple issu de données de l'école
+
+Cette étude a pour objectif de contrôler l'effet au cours du temps de 4 régimes alimentaires sur les paramètres biochimiques liés au contrôle de l'obésité.
+
+On constitue 4 groupes de 6 rats : un groupe contrôle (CC), un groupe recevant un régime enrichi en lipide (LL), un régime enrichi en fructose (FF) et un enrichi en lipide et fructose (LF).
+
+Les variables contrôlées sont les suivantes :
+
+-   Body Weigth ( poids corporel),
+
+-   Masse grasse corporelle,
+
+-   Glycémie,
+
+-   Insulinémie,
+
+-   Taux de cholestérol,
+
+-   Taux de triglycérides,
+
+-   Non Esterified Fatty Acid.
+
+Toutes les données sont mesurées au bout d'une semaine (Week1) puis de 11 (Week11). Le plan d'expérience peut être résumé par la figure suivante :
+
+![figure 1](images/fig_plan.png)
+
+Un extrait des données recueillies :
+
+On étudie
+
+```{r}
+df <- read_excel("~/Dropbox/ONIRIS/cours/cours_VETO/EXPE_ANIMALE/data1.xlsx")
+df$Groups<-factor(df$Groups,levels=c("CC","LL","FF","LF"),labels=c("CC","LL","FF","LF"))
+df$Time<-factor(df$Time,levels=c("Week 1","Week 11"))
+kable(head(df),digits=2)
+```
+
+***Question*** : Les données sont elles dépendantes ou indépendantes ? Pourquoi ?
+
+# Modélisation 1 on aggrège les données sur Time
+
+On calcule les moyennes de toutes les variables considérées sur les rats (c'est à dire pour chaque rat on calcule la moyenne entre la semaine 1 et la semaine 11).
+
+***Question*** : Les données sont elles dépendantes ou indépendantes ? Pourquoi ?
+
+Du côté de R : on utilise la librarie dplyr très pratique pour manipuler les données. Le site <https://juba.github.io/tidyverse/10-dplyr.html> constitue une très bonne introduction à ce package.
+
+On va étudier par exemple les variables NEFA et TG
+
+```{r echo=T}
+df1 = df %>% 
+  group_by(Rats,Groups) %>%
+  summarise(NEFA=mean(NEFA),TG=mean(TG))
+```
+
+## Etude de l'effet régime
+
+On commence par faire une représentation graphique de NEFA en fonction du groupe
+
+```{r}
+ggplot(df1,aes(x=Groups,y=NEFA))+
+  geom_boxplot()+
+  theme_minimal()+
+  labs(title = "NEFA en fonction du régime")
+```
+
+***Question*** Le regime semble t'il avoir un effet sur NEFA ? Quel groupe a la plus grande dispersion ? A combien d'observations correspondent les boxplots
+
+```{r}
+relevel(df1$Groups,ref="CC")
+modLin<-lm(NEFA~Groups,data=df1)
+anova(modLin) %>% kable(digits=3)
+summary(modLin)
+```
+
+# Modélisation à effets mixtes
+
+Ici on va prendre la dimension temporelle des données. C'est à dire l'on modélise le fait que pour chaque rat il y a eu deux mesures de chaque propriété biochimique.
+
+***Remarque***
+
+1.  Avec deux mesures par individu, la modélisation tenant compte de la mesure répétée est limitée à un effet aléatoire sur l'intercept du modèle.
+
+2.  Un modèle dans lequel on considère des effets fixes et des effets aléatoires s'appelle un modèle à effet mixte.
+
+3.  Lorsqu'il y a plus de 2 répétitions on peut envisager des modèles à pentes aléatoires, on le verra dans un deuxième exemple.
+
+## Modèle à intercept aléatoire
+
+```{r}
+ggplot(df,aes(x=Groups,y=NEFA,color=Time))+
+  geom_boxplot()+
+  theme_minimal()+
+  labs(title = "NEFA en fonction du régime")
+```
+
+Dans R pour définir un modèle à effets mixtes on va utiliser le package ***lmerTest***.
+
+La figure ci-dessus nous donne la différence de NEFA pour chaque rat du groupe CC (contrôle) en fonction de la semaine considérée.
+
+D'un point de vue modélisation on va écrire :
+
+$$
+NEFA_{ij}=\mu+\alpha_i+\beta_{j}+\varepsilon_{ij},
+$$ où $i$ est le numéro du rat (de 1 à 6) et $j$ la semaine considérée (1 ou 11).
+
+On obtient les résultats suivants (estimations avec la fonction lm de R).
+
+```{r}
+dfCC<-as.data.frame(df%>% filter(Groups=="CC"))
+dfCC$Rats<-factor(dfCC$Rats)
+dfCC$Time<-factor(dfCC$Time,levels=c("Week 11","Week 1"))
+relevel(dfCC$Time,ref="Week 1")
+
+mod<-lm(NEFA~Time+Rats,data=dfCC)
+summary(mod)
+plot(as.numeric(dfCC$Time),dfCC$NEFA,pch=20,col=dfCC$Rats,ylim=c(0,.6),
+     main="Groupe CC",ylab="NEFA")
+abline(a=coef(mod)[1],b=coef(mod)[2])
+for(i in 1:5){
+  abline(a=coef(mod)[1]+coef(mod)[2+i],b=coef(mod)[2],col=(1+i))
+}
+```
+
+En soi, les résultats individuels des rats n'ont aucun intérêt, on veut seulement "neutraliser" les différences de NEFA qui sont associées à ces rats. Pour ce faire plutôt que de considérer un effet fixe par rat on va utiliser un effet aléatoire qui résumera l'effet "rat".
+
+Le modèle précédent est toujours le même sauf que
+
+$$
+\alpha_i \sim \mathcal N(0,\sigma^2_\alpha)
+$$ avec $\alpha_i,\varepsilon_{ij}$ indépendantes. On résume ainsi les différents coefficients $\alpha_i$ à une seule variance.
+
+```{r}
+modE<-lmer(NEFA~Time+(1|Rats),data=dfCC)
+summary(modE)
+```
+
+On constate que cela ne change pas l'estimation de l'effet semaine (appelé effet fixe).
+
+## Retour au modèle global
+
+$$
+NEFA_{ijk}=\mu+\alpha_i+\beta_{j}+\gamma_{k}+(\beta\gamma)_{jk}+\varepsilon_{ijk},
+$$ où $i$ est le numéro du rat, $j$ le numéro de la semaine et $k$ le numéro du groupe. On a donc trois effets fixes : semaine, groupe et leur interaction. Un effet aléatoire sur l'effet individuel rat.
+
+```{r echo=T}
+RegLin<-lm(NEFA~Groups*Time,data=df)
+summary(RegLin)
+anova(RegLin)
+RegLinME<-lmer(NEFA~Groups*Time+(1|Rats),data=df)
+summary(RegLinME)
+anova(RegLinME)
+```
+
+La différence entre les deux modèles est très faible ce qui s'explique par le fait qu'il n'y a que deux mesures différentes par rat.
+
+On peut ajouter des covariables dans le modèle (les autres paramètres biochimiques)
+
+```{r}
+LinModE<-lmer(NEFA~Time*Groups+
+                BW+Cholesterol+Insulinemia+TG+(1|Rats),data=df)
+anova(LinModE)
+```
+
+Si on veut un modèle plus parcimonieux (on ne garde que les variables significatives), alors on utilise la fonction step :
+
+```{r}
+step(LinModE)
+```
+
+## Vérification de la qualité (mathématique) du modèle.
+
+### Normalité et indépendance des résidus du modèle
+
+On a supposé que les résidus $\varepsilon_{ijk}$ sont distribués normalement on peut le vérifier graphiquement
+
+```{r}
+qqnorm(residuals(LinModE),pch=20)
+qqline(residuals(LinModE),pch=20)
+```
+
+ou bien grâce au test de Shapiro-Wilk
+
+```{r}
+shapiro.test(residuals(modLin))
+```
+
+On peut donc considérer que les résidus sont normaux.
+
+Pour vérifier l'indépendance on regarde si il existe un lien entre les valeurs prédites et les résidus :
+
+```{r}
+plot(residuals(LinModE),fitted(LinModE),pch=20)
+```
+
+Clairement il n'y pas de lien !
+
+### Normalité des effets aléatoires
+
+```{r}
+qqnorm(ranef(LinModE)$Rats$`(Intercept)`)
+qqline(ranef(LinModE)$Rats$`(Intercept)`)
+shapiro.test(ranef(LinModE)$Rats$`(Intercept)`)
+```
+
+# Modèle à pentes aléatoires
+
+Les données sont issues d'une thèse vétérinaire soutenue en Juillet 2021. Le titre :
+
+```{=tex}
+\begin{center}
+évaluation de l'impact du dilueur sur la concentration en PROAKAP4 dans le sperme congelé  de bouc : corrélaion avec la mobilité.
+\end{center}
+```
+
+```{r}
+df <- read_excel("~/Dropbox/ONIRIS/cours/cours_VETO/EXPE_ANIMALE/ProAKAP4_BOUC.xlsx")
+df$Milieu<-factor(df$Milieu,levels=c("L","B","O")) # Milieu est une variable qualitative
+df$Race<-as.factor(df$Race)
+```
+
+L'une des problématiques est de tester l'effet d'un dilueur (3 milieux considérés) et de la race (deux races) sur la variable ALH (Amplitude de déplacement latéral de la tête du spermatozoide).
+
+Pour chacune des deux races on a 3 boucs différents et chacun des échantillons obtenu est placé dans un milieu différent.
+
+```{r}
+ggplot(df,aes(x=Milieu,y=ALH,color=Race))+
+  geom_boxplot()+
+  theme_minimal()
+```
+
+Le modèle mathématique qui est testé est :
+
+$$
+ALH_{ijk}=\alpha_i+\beta_i Dilueur_{ij}+ \gamma_i Race_{ik}+\varepsilon_{ijk}
+$$ où $i$ est le bouc, $j$ le dilueur et $k$ la race.
+
+avec $$
+\begin{cases}
+\alpha_i=\alpha+a_i, \quad a_i\sim \mathcal N(0,\sigma^2_a) \\
+\beta_i = \beta +b_i, \quad \quad b_i\sim \mathcal N(0,\sigma^2_b) \\
+\gamma_i = \gamma +c_i, \quad \quad c_i\sim \mathcal N(0,\sigma^2_c)
+\end{cases}
+$$ Les termes $\alpha,\beta,\gamma$ sont les effets fixes du modèle et les termes $a_i,b_i,c_i$ sont les effets aléatoires.
+
+```{r echo=T, warning=T}
+LinModE<-lmer(ALH~Milieu+Race+(Milieu+Race|Bouc),data=df)
+```
+
+Le modèle est singulier c'est à dire que certaines variances des effets aléatoires sont proches de 0 :
+
+```{r}
+ranef(LinModE)$Bouc
+apply(ranef(LinModE)$Bouc,2,var)
+```
+
+Il s'agit de l'effet aléatoire sur la variable Milieu qui a une variance proche de 0 donc on va retirer ce terme du modèle
+
+```{r echo=T, warning=T}
+LinModE<-lmer(ALH~Milieu+Race+(Race|Bouc),data=df)
+```
+
+On peut alors analyser les sorties du modèle :
+
+```{r}
+anova(LinModE)
+```
+
+On peut vérifier les hypothèses d'utilisation du modèle :
+
+Normalité des résidus et indépedance.
+
+```{r}
+qqnorm(residuals(LinModE),pch=20)
+qqline(residuals(LinModE),pch=20)
+shapiro.test(residuals(LinModE))
+plot(residuals(LinModE),fitted(LinModE),pch=20)
+```
+
+Pour les effets aléatoires :
+
+```{r}
+qqnorm(ranef(LinModE)$Bouc$`(Intercept)`,pch=20)
+qqline(ranef(LinModE)$Bouc$`(Intercept)`,pch=20)
+shapiro.test(ranef(LinModE)$Bouc$`(Intercept)`)
+
+qqnorm(ranef(LinModE)$Bouc$Race1,pch=20)
+qqline(ranef(LinModE)$Bouc$Race1,pch=20)
+shapiro.test(ranef(LinModE)$Bouc$Race1)
+```
+
+Le modèle est donc validé de ce point de vue.
+
+# Autres modélisations
+
+Considérons deux variables continues ProAKAP4 et PROGRESSIVE_PCT
